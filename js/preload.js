@@ -25,20 +25,20 @@ preloader.prototype = {
         game.load.image('metronome', 'images/metronome.jpg');
         game.load.image('stick', 'images/stick.png');
         game.load.image('weight', 'images/weight.png');
+        game.load.image('meter', 'images/meter.png');
+        game.load.image('slider', 'images/slider.png');
 
-       // game.load.spritesheet('leadersBtn', 'images/leadersBtn.png', 92, 95);
+        game.load.audio('sound1', 'audio/metronome1.mp3');
+        game.load.audio('sound2', 'audio/metronome2.mp3');
 
-
-        game.load.audio('sound1', 'audio/amp.mp3');
-        game.load.audio('sound2', 'audio/bing.mp3');
         game.load.audio('sound3', 'audio/can.mp3');
         game.load.audio('sound4', 'audio/can2.mp3');
         game.load.audio('sound5', 'audio/celery.mp3');
         game.load.audio('sound6', 'audio/cork.mp3');
         game.load.audio('sound7', 'audio/cork2.mp3');
         game.load.audio('sound8', 'audio/glass.mp3');
-        game.load.audio('sound9', 'audio/metronome1.mp3');
-        game.load.audio('sound10', 'audio/metronome2.mp3');
+        game.load.audio('sound9', 'audio/amp.mp3');
+        game.load.audio('sound10', 'audio/bing.mp3');
         game.load.audio('sound11', 'audio/scratch.mp3');
         game.load.audio('sound12', 'audio/tape.mp3');
         game.load.audio('sound13', 'audio/puncher.mp3');

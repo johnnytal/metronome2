@@ -1,12 +1,15 @@
 var game_main = function(game){
-    left = true;
     bpm = 120;
-    dragged = false;
-
     timeA = 0;
+    count = 0;
     
+    left = true;
+    dragged = false;
     weightHeight = 200;
     weightX = 392;
+    
+    sliderHeight = 280;
+    sliderWHeight = 280;
 };
 
 game_main.prototype = {
@@ -14,6 +17,46 @@ game_main.prototype = {
         
         metronome = this.add.sprite(0, 0, 'metronome');
         
+        /* silliness meter */    
+        meter = this.add.sprite(740, 280, 'meter');
+        meter.anchor.set(0.5, 0.5);
+        
+        slider = this.add.sprite(730, 280, 'slider');
+        slider.anchor.set(0.5, 0.5);
+        slider.scale.set(0.7, 0.7);
+        
+        slider.inputEnabled = true;
+        slider.input.enableDrag(true);
+        slider.input.allowHorizontalDrag = false;
+        
+        slider.events.onDragStop.add(function(){
+            if (slider.y < 180) slider.y = 180;
+            else if (slider.y > 405) slider.y = 405;
+            sliderHeight = slider.y;
+            
+        }, this);
+        
+        /* weight meter */
+        meterW = this.add.sprite(120, 280, 'meter');
+        meterW.anchor.set(0.5, 0.5);
+        
+        sliderW = this.add.sprite(110, 280, 'slider');
+        sliderW.anchor.set(0.5, 0.5);
+        sliderW.scale.set(0.7, 0.7);
+        
+        sliderW.inputEnabled = true;
+        sliderW.input.enableDrag(true);
+        sliderW.input.allowHorizontalDrag = false;
+        sliderW.tint = 0xffaaff;
+
+        sliderW.events.onDragStop.add(function(){
+            if (sliderW.y < 180) sliderW.y = 180;
+            else if (sliderW.y > 405) sliderW.y = 405;
+            sliderWHeight = sliderW.y;
+            
+        }, this);
+        
+        /* stick and weight */
         stick = this.add.sprite(415, 680, 'stick');
         stick.anchor.set(0.1, 1);
         
@@ -36,11 +79,17 @@ game_main.prototype = {
             weightHeight = weight.y;
             
         }, this);
+
+        bpmLabel = this.add.text(45, 20, '', {
+            font: '45px ' + font, fill: 'orange', fontWeight: 'normal', align: 'center'
+        });
         
-        //bpm = 120;
+        meterLabel = this.add.text(45, 70, '', {
+            font: '45px ' + font, fill: 'yellow', fontWeight: 'normal', align: 'center'
+        });
         
-        bpmLabel = this.add.text(90, 50, '', {
-            font: '45px ' + font, fill: 'darkred', fontWeight: 'normal', align: 'center'
+        soundsLabel = this.add.text(630, 35, '', {
+            font: '38px ' + font, fill: 'lightblue', fontWeight: 'normal', align: 'center'
         });
         
         metroSfx = [
@@ -109,12 +158,34 @@ game_main.prototype = {
             weight.angle = 0;
             weight.x = weightX;
         }
-
+        
+        slider.x = 730;
+        sliderW.x = 110;
     }
 };
 
 function creatSounds(){
-    var soundToPlay = metroSfx[game.rnd.integerInRange(0, metroSfx.length - 1)];
+    count++;
+    
+    var sillyLevel = ((405 - 180) / 18);
+    var sillyness = Math.floor((sliderHeight - 180) / sillyLevel);
+    soundsLabel.text = 'Sounds: ' + (sillyness + 1);
+    
+    var meterLevel = ((405 - 180) / 3);
+    var meter = (Math.floor((sliderWHeight - 180) / meterLevel)) + 2;
+    meterLabel.text = meter + '/4';
+    
+    var soundToPlay;
+    
+    if (count == meter){
+        soundToPlay = metroSfx[0];
+        count = 0;
+    }
+
+    else{
+        soundToPlay = metroSfx[game.rnd.integerInRange(1, sillyness)];
+    }
+    
     soundToPlay.play();
     
     if (timeA == 0) timeA = new Date().getTime();
@@ -124,8 +195,9 @@ function creatSounds(){
         timeC = timeB - timeA;
         
         bpm = 60000 / timeC;
-        bpmLabel.text = Math.round(bpm) + 'bpm';
+        bpmLabel.text = Math.round(bpm) + ' bpm';
         timeA = 0;
     }    
+
 }
 
