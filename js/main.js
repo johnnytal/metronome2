@@ -2,17 +2,19 @@ var game_main = function(game){
     left = true;
     bpm = 120;
     dragged = false;
+
+    timeA = 0;
     
     weightHeight = 200;
-    weightX = 542;
+    weightX = 392;
 };
 
 game_main.prototype = {
     create: function(){
         
-        metronome = this.add.sprite(150, 0, 'metronome');
+        metronome = this.add.sprite(0, 0, 'metronome');
         
-        stick = this.add.sprite(555, 680, 'stick');
+        stick = this.add.sprite(415, 680, 'stick');
         stick.anchor.set(0.1, 1);
         
         weight = this.add.sprite(weightX, weightHeight, 'weight');
@@ -35,7 +37,11 @@ game_main.prototype = {
             
         }, this);
         
-        bpm = 120;
+        //bpm = 120;
+        
+        bpmLabel = this.add.text(90, 50, '', {
+            font: '45px ' + font, fill: 'darkred', fontWeight: 'normal', align: 'center'
+        });
         
         metroSfx = [
             metroSfx1 = game.add.audio('sound1', 1, false),
@@ -63,20 +69,16 @@ game_main.prototype = {
     },
     
     update: function(){
-        
         angle = Math.round( (1 / weightHeight) * 7500 );
 
         if (stick.angle <= -angle){
              left = false;
              creatSounds();
-  
-             console.log(weight.y)
         } 
         
         else if (stick.angle >= angle){
             left = true;
             creatSounds();
-            
         }
        
         if (!dragged){
@@ -114,4 +116,16 @@ game_main.prototype = {
 function creatSounds(){
     var soundToPlay = metroSfx[game.rnd.integerInRange(0, metroSfx.length - 1)];
     soundToPlay.play();
+    
+    if (timeA == 0) timeA = new Date().getTime();
+ 
+    else if (timeA != 0){
+        timeB = new Date().getTime();
+        timeC = timeB - timeA;
+        
+        bpm = 60000 / timeC;
+        bpmLabel.text = Math.round(bpm) + 'bpm';
+        timeA = 0;
+    }    
 }
+

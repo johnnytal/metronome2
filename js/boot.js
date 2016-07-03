@@ -2,8 +2,8 @@
 window.onload = start;
 
 function start(){
-    WIDTH = 1080; 
-    HEIGHT = 1920;
+    WIDTH = 850; 
+    HEIGHT = 1100;
     
     w = window.innerWidth * window.devicePixelRatio;
     h = window.innerHeight * window.devicePixelRatio;
@@ -27,7 +27,7 @@ boot.prototype = {
         bannerNotCraeted = true;
         var interstitial;
         
-        game.stage.backgroundColor = '#f1f1f1';
+        game.stage.backgroundColor = '#3aa589';
 
         if (this.game.device.desktop){
 
