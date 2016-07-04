@@ -23,7 +23,7 @@ boot.prototype = {
     preload: function(){},
     
     create: function(){  
-        font = 'Luckiest Guy';   
+        font = 'Fontdiner Swanky';   
         bannerNotCraeted = true;
         var interstitial;
         

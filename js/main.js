@@ -2,6 +2,7 @@ var game_main = function(game){
     bpm = 120;
     timeA = 0;
     count = 0;
+    meterWasNone = false;
     
     left = true;
     dragged = false;
@@ -20,10 +21,12 @@ game_main.prototype = {
         /* silliness meter */    
         meter = this.add.sprite(740, 280, 'meter');
         meter.anchor.set(0.5, 0.5);
+        meter.alpha = 0.9;
         
         slider = this.add.sprite(730, 280, 'slider');
         slider.anchor.set(0.5, 0.5);
         slider.scale.set(0.7, 0.7);
+        slider.alpha = 0.9;
         
         slider.inputEnabled = true;
         slider.input.enableDrag(true);
@@ -39,6 +42,7 @@ game_main.prototype = {
         /* weight meter */
         meterW = this.add.sprite(120, 280, 'meter');
         meterW.anchor.set(0.5, 0.5);
+        meterW.alpha = 0.9;
         
         sliderW = this.add.sprite(110, 280, 'slider');
         sliderW.anchor.set(0.5, 0.5);
@@ -48,6 +52,7 @@ game_main.prototype = {
         sliderW.input.enableDrag(true);
         sliderW.input.allowHorizontalDrag = false;
         sliderW.tint = 0xffaaff;
+        sliderW.alpha = 0.9;
 
         sliderW.events.onDragStop.add(function(){
             if (sliderW.y < 180) sliderW.y = 180;
@@ -81,20 +86,25 @@ game_main.prototype = {
         }, this);
 
         bpmLabel = this.add.text(45, 20, '', {
-            font: '45px ' + font, fill: 'orange', fontWeight: 'normal', align: 'center'
+            font: '42px ' + font, fill: 'orange', fontWeight: 'normal', align: 'center'
         });
         
         meterLabel = this.add.text(45, 70, '', {
-            font: '45px ' + font, fill: 'yellow', fontWeight: 'normal', align: 'center'
+            font: '36px ' + font, fill: 'yellow', fontWeight: 'normal', align: 'center'
         });
         
         soundsLabel = this.add.text(630, 35, '', {
-            font: '38px ' + font, fill: 'lightblue', fontWeight: 'normal', align: 'center'
+            font: '36px ' + font, fill: 'lightblue', fontWeight: 'normal', align: 'center'
         });
         
+        bpmLabel.alpha = 0.8;
+        meterLabel.alpha = 0.8;
+        soundsLabel.alpha = 0.8;
+        
+        metroSfx1 = game.add.audio('sound1', 1, false),
+        metroSfx2 = game.add.audio('sound2', 1, false),
+        
         metroSfx = [
-            metroSfx1 = game.add.audio('sound1', 1, false),
-            metroSfx2 = game.add.audio('sound2', 1, false),
             metroSfx3 = game.add.audio('sound3', 1, false),
             metroSfx4 = game.add.audio('sound4', 1, false),
             metroSfx5 = game.add.audio('sound5', 1, false),
@@ -105,15 +115,30 @@ game_main.prototype = {
             metroSfx10 = game.add.audio('sound10', 1, false),
             metroSfx11 = game.add.audio('sound11', 1, false),
             metroSfx12 = game.add.audio('sound12', 1, false),
-            metroSfx12 = game.add.audio('sound13', 1, false),
-            metroSfx12 = game.add.audio('sound14', 1, false),
-            metroSfx12 = game.add.audio('sound15', 1, false),
-            metroSfx12 = game.add.audio('sound16', 1, false),
-            metroSfx12 = game.add.audio('sound17', 1, false),
-            metroSfx12 = game.add.audio('sound18', 1, false),
-            metroSfx12 = game.add.audio('sound19', 1, false)
+            metroSfx13 = game.add.audio('sound13', 1, false),
+            metroSfx14 = game.add.audio('sound14', 1, false),
+            metroSfx15 = game.add.audio('sound15', 1, false),
+            metroSfx16 = game.add.audio('sound16', 1, false),
+            metroSfx17 = game.add.audio('sound17', 1, false),
+            metroSfx18 = game.add.audio('sound18', 1, false),
+            metroSfx19 = game.add.audio('sound19', 1, false)
         ];
         
+        newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx); 
+       
+        shuffleBtn = this.add.button (700, 500, 'shuffleBtn');
+        shuffleBtn.scale.set(0.7, 0.7);
+        shuffleBtn.inputEnabled = true;
+        shuffleBtn.onInputDown.add(function(){
+           newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx);  
+           shuffleBtn.tint = 0xaffaaf;
+        },this);
+        shuffleBtn.onInputUp.add(function(){
+           newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx);  
+           shuffleBtn.tint = 0xffffff;
+        },this);
+        
+
         creatSounds();
     },
     
@@ -132,7 +157,7 @@ game_main.prototype = {
        
         if (!dragged){
             
-            factor = 1.5;
+            factor = 1.4;
             
             if (left){
                 stick.angle -= factor; 
@@ -167,23 +192,36 @@ game_main.prototype = {
 function creatSounds(){
     count++;
     
-    var sillyLevel = ((405 - 180) / 18);
+    var sillyLevel = ((405 - 180) / (newMetroSfx.length - 1));
     var sillyness = Math.floor((sliderHeight - 180) / sillyLevel);
+    
     soundsLabel.text = 'Sounds: ' + (sillyness + 1);
     
-    var meterLevel = ((405 - 180) / 3);
+    var meterLevel = ((405 - 180) / 4);
     var meter = (Math.floor((sliderWHeight - 180) / meterLevel)) + 2;
-    meterLabel.text = meter + '/4';
+    
+    if (meter == 6){ 
+        meterLabel.text = 'None';
+        meterWasNone = true;
+    }
+    else{
+        meterLabel.text = meter + '/4'; 
+    }
     
     var soundToPlay;
     
-    if (count == meter){
-        soundToPlay = metroSfx[0];
+    if ((count == meter || meterWasNone) && meter != 6){
+        soundToPlay = metroSfx1;
+        meterWasNone = false;
         count = 0;
+    }
+    
+    else if (sillyness == 0 && count != meter){
+        soundToPlay = metroSfx2;
     }
 
     else{
-        soundToPlay = metroSfx[game.rnd.integerInRange(1, sillyness)];
+        soundToPlay = newMetroSfx[game.rnd.integerInRange(1, sillyness)];
     }
     
     soundToPlay.play();
@@ -198,6 +236,5 @@ function creatSounds(){
         bpmLabel.text = Math.round(bpm) + ' bpm';
         timeA = 0;
     }    
-
 }
 
