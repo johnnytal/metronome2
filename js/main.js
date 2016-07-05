@@ -82,6 +82,23 @@ game_main.prototype = {
         /* stick and weight */
         stick = this.add.sprite(415, 680, 'stick');
         stick.anchor.set(0.1, 1);
+        stick.inputEnabled = true;
+        
+        stick.events.onInputDown.add(function(){
+           dragged = true;
+           weight.y = game.input.activePointer.y;
+
+           actions++;
+           
+           if (weight.y < 180) weight.y = 180;
+           else if (weight.y > 630) weight.y = 630;
+           weightHeight = weight.y;
+           
+           setTimeout(function(){
+               dragged = false;
+           },20);
+           
+        }, this);
         
         weight = this.add.sprite(weightX, weightHeight, 'weight');
         weight.anchor.set(0.1, 1);
