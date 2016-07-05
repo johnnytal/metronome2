@@ -26,6 +26,7 @@ boot.prototype = {
         font = 'Fontdiner Swanky';   
         bannerNotCraeted = true;
         var interstitial;
+        var banner;
         
         game.stage.backgroundColor = '#3aa589';
 

@@ -11,6 +11,8 @@ var game_main = function(game){
     
     sliderHeight = 280;
     sliderWHeight = 280;
+    
+    actions = 0;
 };
 
 game_main.prototype = {
@@ -22,6 +24,14 @@ game_main.prototype = {
         meter = this.add.sprite(740, 280, 'meter');
         meter.anchor.set(0.5, 0.5);
         meter.alpha = 0.9;
+        meter.inputEnabled = true;
+        meter.events.onInputDown.add(function(){
+           slider.y = game.input.activePointer.y;
+           if (slider.y < 180) slider.y = 180;
+           else if (slider.y > 405) slider.y = 405;
+           sliderHeight = slider.y;
+           actions++;
+        }, this);
         
         slider = this.add.sprite(730, 280, 'slider');
         slider.anchor.set(0.5, 0.5);
@@ -36,13 +46,21 @@ game_main.prototype = {
             if (slider.y < 180) slider.y = 180;
             else if (slider.y > 405) slider.y = 405;
             sliderHeight = slider.y;
-            
+            actions++;
         }, this);
         
         /* weight meter */
         meterW = this.add.sprite(120, 280, 'meter');
         meterW.anchor.set(0.5, 0.5);
         meterW.alpha = 0.9;
+        meterW.inputEnabled = true;
+        meterW.events.onInputDown.add(function(){
+           sliderW.y = game.input.activePointer.y;
+           if (sliderW.y < 180) sliderW.y = 180;
+           else if (sliderW.y > 405) sliderW.y = 405;
+           sliderWHeight = sliderW.y;
+           actions++;
+        }, this);
         
         sliderW = this.add.sprite(110, 280, 'slider');
         sliderW.anchor.set(0.5, 0.5);
@@ -58,7 +76,7 @@ game_main.prototype = {
             if (sliderW.y < 180) sliderW.y = 180;
             else if (sliderW.y > 405) sliderW.y = 405;
             sliderWHeight = sliderW.y;
-            
+            actions++;
         }, this);
         
         /* stick and weight */
@@ -78,6 +96,7 @@ game_main.prototype = {
         
         weight.events.onDragStop.add(function(){
             dragged = false;
+            actions++;
 
             if (weight.y < 180) weight.y = 180;
             else if (weight.y > 630) weight.y = 630;
@@ -85,21 +104,23 @@ game_main.prototype = {
             
         }, this);
 
-        bpmLabel = this.add.text(45, 20, '', {
-            font: '42px ' + font, fill: 'orange', fontWeight: 'normal', align: 'center'
+        bpmLabel = this.add.text(125, 40, '', {
+            font: '38px ' + font, fill: 'orange', fontWeight: 'normal', align: 'center'
         });
+        bpmLabel.anchor.set(0.5, 0.5);
         
-        meterLabel = this.add.text(45, 70, '', {
+        meterLabel = this.add.text(125, 95, '', {
             font: '36px ' + font, fill: 'yellow', fontWeight: 'normal', align: 'center'
         });
+        meterLabel.anchor.set(0.5, 0.5);
         
-        soundsLabel = this.add.text(630, 35, '', {
-            font: '36px ' + font, fill: 'lightblue', fontWeight: 'normal', align: 'center'
+        soundsLabel = this.add.text(642, 60, '', {
+            font: '34px ' + font, fill: 'lightblue', fontWeight: 'normal', align: 'center'
         });
         
         bpmLabel.alpha = 0.8;
         meterLabel.alpha = 0.8;
-        soundsLabel.alpha = 0.8;
+        soundsLabel.alpha = 0.9;
         
         metroSfx1 = game.add.audio('sound1', 1, false),
         metroSfx2 = game.add.audio('sound2', 1, false),
@@ -127,17 +148,29 @@ game_main.prototype = {
         newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx); 
        
         shuffleBtn = this.add.button (700, 500, 'shuffleBtn');
-        shuffleBtn.scale.set(0.7, 0.7);
+        shuffleBtn.scale.set(0.72, 0.78);
         shuffleBtn.inputEnabled = true;
         shuffleBtn.onInputDown.add(function(){
            newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx);  
-           shuffleBtn.tint = 0xaffaaf;
+           shuffleBtn.tint = 0xdd2266;
         },this);
         shuffleBtn.onInputUp.add(function(){
            newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx);  
            shuffleBtn.tint = 0xffffff;
+           actions++;
         },this);
         
+
+        try{
+            Cocoon.Ad.AdMob.configure({
+                android: { 
+                      interstitial:"ca-app-pub-9795366520625065/8724312231"
+                }
+            });
+            
+            interstitial = Cocoon.Ad.AdMob.createInterstitial();
+            interstitial.load();
+        } catch(e){}
 
         creatSounds();
     },
@@ -190,6 +223,8 @@ game_main.prototype = {
 };
 
 function creatSounds(){
+    weight.tint = (weightHeight / 50) * 0xffffff;
+
     count++;
     
     var sillyLevel = ((405 - 180) / (newMetroSfx.length - 1));
@@ -236,5 +271,12 @@ function creatSounds(){
         bpmLabel.text = Math.round(bpm) + ' bpm';
         timeA = 0;
     }    
+    
+    if (actions == 30){
+        actions = 0;
+        try{
+            interstitial.show();
+        } catch(e){}
+    }
 }
 
