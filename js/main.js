@@ -19,6 +19,7 @@ game_main.prototype = {
     create: function(){
         
         metronome = this.add.sprite(0, 0, 'metronome');
+        eyes = this.add.sprite(225, 120, 'eyes');
         
         /* silliness meter */    
         meter = this.add.sprite(740, 280, 'meter');
@@ -27,10 +28,7 @@ game_main.prototype = {
         meter.inputEnabled = true;
         meter.events.onInputDown.add(function(){
            slider.y = game.input.activePointer.y;
-           if (slider.y < 180) slider.y = 180;
-           else if (slider.y > 405) slider.y = 405;
-           sliderHeight = slider.y;
-           actions++;
+           sliderDragStop();
         }, this);
         
         slider = this.add.sprite(730, 280, 'slider');
@@ -43,10 +41,7 @@ game_main.prototype = {
         slider.input.allowHorizontalDrag = false;
         
         slider.events.onDragStop.add(function(){
-            if (slider.y < 180) slider.y = 180;
-            else if (slider.y > 405) slider.y = 405;
-            sliderHeight = slider.y;
-            actions++;
+            sliderDragStop();
         }, this);
         
         /* weight meter */
@@ -56,10 +51,7 @@ game_main.prototype = {
         meterW.inputEnabled = true;
         meterW.events.onInputDown.add(function(){
            sliderW.y = game.input.activePointer.y;
-           if (sliderW.y < 180) sliderW.y = 180;
-           else if (sliderW.y > 405) sliderW.y = 405;
-           sliderWHeight = sliderW.y;
-           actions++;
+           sliderWDragStop();
         }, this);
         
         sliderW = this.add.sprite(110, 280, 'slider');
@@ -73,10 +65,7 @@ game_main.prototype = {
         sliderW.alpha = 0.9;
 
         sliderW.events.onDragStop.add(function(){
-            if (sliderW.y < 180) sliderW.y = 180;
-            else if (sliderW.y > 405) sliderW.y = 405;
-            sliderWHeight = sliderW.y;
-            actions++;
+            sliderWDragStop();
         }, this);
         
         /* stick and weight */
@@ -87,12 +76,8 @@ game_main.prototype = {
         stick.events.onInputDown.add(function(){
            dragged = true;
            weight.y = game.input.activePointer.y;
-
-           actions++;
            
-           if (weight.y < 180) weight.y = 180;
-           else if (weight.y > 630) weight.y = 630;
-           weightHeight = weight.y;
+           metronomeDrag();
            
            setTimeout(function(){
                dragged = false;
@@ -113,27 +98,25 @@ game_main.prototype = {
         
         weight.events.onDragStop.add(function(){
             dragged = false;
-            actions++;
-
-            if (weight.y < 180) weight.y = 180;
-            else if (weight.y > 630) weight.y = 630;
-            weightHeight = weight.y;
+            
+            metronomeDrag();
             
         }, this);
 
-        bpmLabel = this.add.text(125, 40, '', {
+        bpmLabel = this.add.text(40, 20, '', {
             font: '38px ' + font, fill: 'orange', fontWeight: 'normal', align: 'center'
         });
-        bpmLabel.anchor.set(0.5, 0.5);
         
-        meterLabel = this.add.text(125, 95, '', {
-            font: '36px ' + font, fill: 'yellow', fontWeight: 'normal', align: 'center'
+        meterLabel = this.add.text(meterW.x - 12, meterW.y, '', {
+            font: '34px ' + font, fill: 'yellow', fontWeight: 'normal', align: 'center'
         });
         meterLabel.anchor.set(0.5, 0.5);
+        meterLabel.angle = -12;
         
-        soundsLabel = this.add.text(642, 60, '', {
-            font: '34px ' + font, fill: 'lightblue', fontWeight: 'normal', align: 'center'
+        soundsLabel = this.add.text(slider.x, slider.y , '', {
+            font: '34px ' + font, fill: 'lightgreen', fontWeight: 'normal', align: 'center'
         });
+        soundsLabel.anchor.set(0.5, 0.5);
         
         bpmLabel.alpha = 0.8;
         meterLabel.alpha = 0.8;
@@ -170,6 +153,10 @@ game_main.prototype = {
         shuffleBtn.onInputDown.add(function(){
            newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx);  
            shuffleBtn.tint = 0xdd2266;
+           
+           eyes.x = 235;
+           eyes.y = 124; 
+           
         },this);
         shuffleBtn.onInputUp.add(function(){
            newMetroSfx = Phaser.ArrayUtils.shuffle(metroSfx);  
@@ -211,7 +198,7 @@ game_main.prototype = {
             
             if (left){
                 stick.angle -= factor; 
-                weight.angle -= factor*1.2; 
+                weight.angle -= factor * 1.2; 
                 
                 weight.x -= 15 - (weightHeight / 47);
             }
@@ -224,7 +211,7 @@ game_main.prototype = {
                 
             }
 
-            weight.y =  Math.abs(weight.angle)* 1.5 + weightHeight;
+            weight.y =  Math.abs(weight.angle) * 1.5 + weightHeight;
             
         }
         
@@ -236,7 +223,7 @@ game_main.prototype = {
         
         slider.x = 730;
         sliderW.x = 110;
-    }
+    }    
 };
 
 function creatSounds(){
@@ -247,7 +234,7 @@ function creatSounds(){
     var sillyLevel = ((405 - 180) / (newMetroSfx.length - 1));
     var sillyness = Math.floor((sliderHeight - 180) / sillyLevel);
     
-    soundsLabel.text = 'Sounds: ' + (sillyness + 1);
+    soundsLabel.text = (sillyness + 1);
     
     var meterLevel = ((405 - 180) / 4);
     var meter = (Math.floor((sliderWHeight - 180) / meterLevel)) + 2;
@@ -285,11 +272,11 @@ function creatSounds(){
         timeC = timeB - timeA;
         
         bpm = 60000 / timeC;
-        bpmLabel.text = Math.round(bpm) + ' bpm';
+        bpmLabel.text = "\u2669 = " + Math.round(bpm);
         timeA = 0;
     }    
     
-    if (actions == 30){
+    if (actions == 25){
         actions = 0;
         try{
             interstitial.show();
@@ -297,3 +284,37 @@ function creatSounds(){
     }
 }
 
+function metronomeDrag(){
+    actions++;
+
+    if (weight.y < 180) weight.y = 180;
+    else if (weight.y > 630) weight.y = 630;
+    
+    weightHeight = weight.y;
+    eyes.x = 220;
+    eyes.y = 127; 
+}
+
+function sliderWDragStop(){
+   if (sliderW.y < 180) sliderW.y = 180;
+   else if (sliderW.y > 405) sliderW.y = 405;
+   
+   sliderWHeight = sliderW.y;
+   meterLabel.y = sliderW.y;
+
+   eyes.x = 210;
+   eyes.y = 120;  
+   actions++;   
+}
+
+function sliderDragStop(){
+   if (slider.y < 180) slider.y = 180;
+   else if (slider.y > 405) slider.y = 405;
+   
+   sliderHeight = slider.y;
+   soundsLabel.y = slider.y;
+   
+   eyes.x = 230;
+   eyes.y = 120; 
+   actions++;    
+}

@@ -14,6 +14,7 @@ preloader.prototype = {
         });
 
         game.load.image('metronome', 'images/metronome.jpg');
+        game.load.image('eyes', 'images/eyes.png');
         game.load.image('stick', 'images/stick.png');
         game.load.image('weight', 'images/weight.png');
         game.load.image('meter', 'images/meter.png');
