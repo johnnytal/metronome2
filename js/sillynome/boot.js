@@ -1,4 +1,7 @@
 document.addEventListener("deviceready", start, false);
+document.addEventListener("pause", onPause, false);
+document.addEventListener("resume", onResume, false);
+
 //window.onload = start;
 
 function start(){
@@ -23,28 +26,32 @@ boot.prototype = {
     preload: function(){},
     
     create: function(){  
-        font = 'Fontdiner Swanky';   
-        bannerNotCraeted = true;
-        var interstitial;
-        var banner;
+        font = 'alphabetized';
         
         game.stage.backgroundColor = '#3aa589';
 
-        if (this.game.device.desktop){
-
-        } 
-        
-        else {
+        if (!this.game.device.desktop){
             this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
             this.scale.maxWidth = w;
             this.scale.maxHeight = h;
             
             this.scale.forceOrientation(true, false );
-        }
-        
+        } 
+
         game.state.start('Preloader');
     }
 };
 
+function onPause(){
+    game.paused = true;
+}
 
+function onResume(){
+    game.paused = false;
+    setTimeout(function(){
+        try{
+            StatusBar.hide();
+        }catch(e){}   
+    }, 1000);
+}
