@@ -4,9 +4,9 @@ var game_main = function(game){
     count = 0;
     meterWasNone = false;
     
-    allow_accel = true;
-    accelX = 0;
-    last_accelX = 0;
+    //allow_accel = true;
+   // accelX = 0;
+    //last_accelX = 0;
     
     left = true;
     dragged = false;
@@ -163,7 +163,7 @@ game_main.prototype = {
            shuffleBtn.tint = 0xffffff;
         },this);
         
-        accelBtn = this.add.button (700, 650, 'accelBtn');
+        /*accelBtn = this.add.button (700, 650, 'accelBtn');
         accelBtn.inputEnabled = true;
         accelBtn.onInputDown.add(function(){
            if (accelBtn.tint = 0xffffff){
@@ -175,15 +175,15 @@ game_main.prototype = {
 
            eyes.x = 230;
            eyes.y = 126; 
-        },this);
-        accelBtn.onInputUp.add(function(){
+        },this);*/
+       /* accelBtn.onInputUp.add(function(){
             if (allow_accel){
                 allow_accel = false;
             }
             else{
                 allow_accel = true;
             }
-        },this);
+        },this);*/
         
         try{
             window.plugins.insomnia.keepAwake();
@@ -197,7 +197,7 @@ game_main.prototype = {
 
         creatSounds();
         initAd();
-        watchReading();
+        //watchReading();
     },
     
     update: function(){
@@ -215,7 +215,7 @@ game_main.prototype = {
 
         if (!dragged){
 
-            if (allow_accel){
+           /* if (allow_accel){
                 if (Math.abs(accelX - last_accelX) > 0.3){
                     stick.angle = accelX * 5; 
                     weight.angle = (accelX * 5) * 1.2; 
@@ -225,7 +225,7 @@ game_main.prototype = {
                 }
             } 
             
-            else{
+            else{*/
                 factor = 1.4;
             
                 if (left){
@@ -243,7 +243,7 @@ game_main.prototype = {
                 }
     
                 weight.y =  Math.abs(weight.angle) * 1.5 + weightHeight;
-            }
+            //}
         }
         
         else{
@@ -255,7 +255,7 @@ game_main.prototype = {
         slider.x = 730;
         sliderW.x = 110;
         
-        last_accelX = accelX;
+        //last_accelX = accelX;
     }    
 };
 
@@ -345,7 +345,7 @@ function sliderDragStop(){
    eyes.y = 120;  
 }
 
-function watchReading(){
+/*function watchReading(){
     watchID = navigator.accelerometer.watchAcceleration(readAccel, onError, { frequency: 20 });
 }
 
@@ -355,7 +355,7 @@ function readAccel(acceleration){
 
 function onError() {
     alert('No acceleration reading detected!');
-};
+};*/
 
 function loadSounds(){           
     metroSfx1 = game.add.audio('sound1', 1, false),

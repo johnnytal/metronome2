@@ -20,7 +20,6 @@ preloader.prototype = {
         game.load.image('meter', 'assets/sillynome/images/meter.png');
         game.load.image('slider', 'assets/sillynome/images/slider.png');
         game.load.image('shuffleBtn', 'assets/sillynome/images/shuffle.png');
-        game.load.image('accelBtn', 'assets/sillynome/images/accel.png');
 
         game.load.audio('sound1', 'assets/sillynome/audio/metronome1.ogg');
         game.load.audio('sound2', 'assets/sillynome/audio/metronome2.ogg');
